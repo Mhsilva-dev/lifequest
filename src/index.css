@@ -1,0 +1,62 @@
+/* Tailwind v4: habilita as classes utilitárias (flex, grid, gap-*, p-*...)
+   usadas em todo o LifeQuest.jsx */
+@import "tailwindcss";
+
+/* Tokens de tema. O tema padrão é escuro (quase preto) — ver
+   DEFAULT_SETTINGS.theme em LifeQuest.jsx — mas o claro continua
+   disponível em Configurações. */
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --accent: #E5E5E5;
+  --accent-bg: rgba(0, 0, 0, 0.06);
+  --accent-border: rgba(0, 0, 0, 0.3);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 16px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tema escuro: fundo quase preto (não o roxo/cinza-azulado de antes) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #a1a1aa;
+    --text-h: #f4f4f5;
+    --bg: #050505;
+    --border: #1e1e21;
+    --accent: #e5e5e5;
+    --accent-bg: rgba(229, 229, 229, 0.12);
+    --accent-border: rgba(229, 229, 229, 0.4);
+    --shadow:
+      rgba(0, 0, 0, 0.5) 0 10px 15px -3px, rgba(0, 0, 0, 0.3) 0 4px 6px -2px;
+  }
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+p {
+  margin: 0;
+}

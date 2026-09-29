@@ -1,0 +1,104 @@
+/* ================================================================
+   Fundo ambiente do app principal (atrás da sidebar/topbar/cards) —
+   uma trilha de montanha que o "viajante" sobe conforme o jogador
+   ganha nível/XP de verdade. Sutil de propósito: o efeito psicológico
+   funciona melhor no fundo do olho do que gritando na tela.
+================================================================= */
+.dbg-root {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dbg-tint {
+  position: absolute;
+  inset: 0;
+  transition: background 1.5s ease;
+}
+
+.dbg-summit-glow {
+  position: absolute;
+  width: 55vw;
+  height: 55vw;
+  max-width: 640px;
+  max-height: 640px;
+  left: 62%;
+  top: 4%;
+  transform: translateX(-50%);
+  filter: blur(20px);
+  animation: dbg-glow-pulse 6s ease-in-out infinite;
+}
+@keyframes dbg-glow-pulse {
+  0%, 100% { opacity: .3; }
+  50% { opacity: .55; }
+}
+
+.dbg-ember {
+  position: absolute;
+  bottom: -6px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  opacity: 0;
+  animation-name: dbg-ember-rise;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+}
+@keyframes dbg-ember-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  8% { opacity: .3; }
+  92% { opacity: .12; }
+  100% { transform: translateY(-85vh); opacity: 0; }
+}
+
+.dbg-mountain-zone {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 46vh;
+}
+.dbg-mountains {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.dbg-ridge-back { fill: var(--border); opacity: .45; }
+.dbg-ridge-mid { fill: var(--border); opacity: .8; }
+.dbg-ridge-front { fill: var(--surface-2); opacity: 1; }
+
+.dbg-flag {
+  position: absolute;
+  transform: translate(-50%, 50%);
+  font-size: 13px;
+  opacity: .75;
+  filter: grayscale(.5);
+  animation: dbg-flag-wave 2.4s ease-in-out infinite;
+}
+@keyframes dbg-flag-wave {
+  0%, 100% { transform: translate(-50%, 50%) rotate(0deg); }
+  50% { transform: translate(-50%, 50%) rotate(8deg); }
+}
+
+.dbg-climber {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  transform: translate(-50%, 50%);
+  transition: left 1.4s cubic-bezier(.4,0,.2,1), bottom 1.4s cubic-bezier(.4,0,.2,1);
+  animation: dbg-climber-pulse 2.2s ease-in-out infinite;
+}
+@keyframes dbg-climber-pulse {
+  0%, 100% { transform: translate(-50%, 50%) scale(1); }
+  50% { transform: translate(-50%, 50%) scale(1.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dbg-ember, .dbg-summit-glow, .dbg-flag, .dbg-climber {
+    animation: none !important;
+  }
+}

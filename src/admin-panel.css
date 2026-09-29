@@ -1,0 +1,47 @@
+/* Estilos exclusivos do /admin — reaproveita tokens/variáveis e classes
+   base (lq-card, lq-input, lq-btn...) de lifequest.css, só acrescenta o
+   layout específico da tela de login e da lista de contas. */
+
+.lq-admin-center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.lq-admin-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.lq-admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.lq-admin-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+.lq-admin-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 90px;
+}
+
+@media (max-width: 640px) {
+  .lq-admin-row { gap: 12px; }
+  .lq-admin-stat { min-width: 76px; }
+}

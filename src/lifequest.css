@@ -1,0 +1,686 @@
+/* ================================================================
+   LifeQuest — folha de estilos do app
+   Todas as classes com prefixo "lq-" usadas em LifeQuest.jsx moram
+   aqui. Organizado nas mesmas seções que o componente, para ficar
+   fácil achar o CSS de cada pedaço da UI.
+================================================================= */
+
+/* ---------- 1. Design tokens ----------
+   Reaproveita as variáveis já criadas em index.css (--text, --bg,
+   --border, --accent, --mono, --heading...) e adiciona as que o
+   LifeQuest precisa e ainda não existiam (--surface, --text-dim,
+   --text-faint, --accent-soft). Um bloco para tema claro e outro
+   para escuro, no mesmo padrão do index.css. */
+:root {
+  --surface: #ffffff;
+  --surface-2: #f7f6fb;
+  --text-dim: #6b6375;
+  --text-faint: #9b93a5;
+  --accent-soft: #d4d4d8;
+  --danger: #ef4444;
+  --success: #22c55e;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+/* Fundo bem escuro (quase preto), não o cinza-azulado/roxo de antes —
+   os cards (--surface) ficam só um pouco mais claros que o --bg pra dar
+   separação visual sem virar "cinza chumbo". */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #0c0c0e;
+    --surface-2: #141416;
+    --text-dim: #9c9ca3;
+    --text-faint: #6b6b72;
+    --accent-soft: #d4d4d8;
+  }
+}
+
+/* data-theme força um tema específico quando o usuário escolhe
+   manualmente em Configurações, sobrepondo o prefers-color-scheme */
+:root[data-theme="light"] {
+  --surface: #ffffff;
+  --surface-2: #f7f6fb;
+  --text-dim: #6b6375;
+  --text-faint: #9b93a5;
+  --accent-soft: #d4d4d8;
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+}
+:root[data-theme="dark"] {
+  --surface: #0c0c0e;
+  --surface-2: #141416;
+  --text-dim: #9c9ca3;
+  --text-faint: #6b6b72;
+  --accent-soft: #d4d4d8;
+  --text: #a1a1aa;
+  --text-h: #f4f4f5;
+  --bg: #050505;
+  --border: #1e1e21;
+}
+
+/* ---------- 2. Resets utilitários ---------- */
+.lq-reset {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.lq-focus:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+.lq-display {
+  font-family: var(--heading);
+  color: var(--text-h);
+}
+.lq-mono {
+  font-family: var(--mono);
+}
+.lq-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.lq-scroll::-webkit-scrollbar { width: 8px; }
+.lq-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+
+/* ---------- 3. Layout geral (shell / sidebar / topbar / bottomnav) ----------
+   Estrutura: sidebar fixa à esquerda no desktop + área principal
+   rolável; no mobile a sidebar some e vira uma barra fixa embaixo. */
+.lq-app {
+  width: 100%;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--text);
+}
+.lq-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100svh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.lq-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+}
+.lq-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+.lq-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  color: var(--text-dim);
+  transition: background .15s ease, color .15s ease;
+}
+.lq-nav-item:hover { background: var(--surface-2); color: var(--text); }
+.lq-nav-item.active { background: var(--accent-bg, rgba(124,58,237,.12)); color: var(--accent); font-weight: 600; }
+
+.lq-main {
+  flex: 1;
+  min-width: 0;
+  padding: 22px 24px 100px;
+}
+.lq-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+.lq-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lq-bottomnav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+  z-index: 40;
+}
+.lq-bottomnav-inner {
+  display: flex;
+  justify-content: space-around;
+}
+.lq-bottomnav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 10.5px;
+  color: var(--text-faint);
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+.lq-bottomnav-item.active { color: var(--accent); }
+
+.lq-bottomnav-more-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+}
+.lq-bottomnav-more {
+  position: absolute;
+  right: 6px;
+  bottom: calc(100% + 8px);
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  min-width: 190px;
+}
+.lq-bottomnav-more-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text);
+  width: 100%;
+  text-align: left;
+}
+.lq-bottomnav-more-item.active { color: var(--accent); }
+
+@media (max-width: 860px) {
+  .lq-sidebar { display: none; }
+  .lq-bottomnav { display: block; }
+  .lq-main { padding: 16px 14px 90px; }
+}
+
+/* ---------- 4. Cartões (base de quase toda a UI) ---------- */
+.lq-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.lq-glass {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+}
+
+/* animação de entrada suave usada em quase todo card da tela */
+.lq-animate {
+  animation: lq-fade-up .45s ease both;
+}
+@keyframes lq-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* frase motivacional do dia, no topo do dashboard */
+.lq-quote-card {
+  border-left: 3px solid var(--lq-quote-accent, var(--accent));
+}
+.lq-quote-text {
+  font-family: var(--heading);
+  color: var(--text-h);
+  font-size: 15.5px;
+  font-style: italic;
+  line-height: 1.55;
+}
+
+/* ---------- 5. Badges, pills e chips ---------- */
+.lq-icon-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.lq-dev-milestone {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.lq-dev-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: background .2s ease;
+}
+.lq-level-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-bg, rgba(124,58,237,.15));
+  color: var(--accent);
+}
+.lq-quest-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.lq-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.lq-chip.active {
+  background: var(--accent-bg, rgba(124,58,237,.15));
+  color: var(--accent);
+  border-color: transparent;
+}
+
+/* chama animada da sequência (streak) */
+.lq-flame {
+  animation: lq-flicker 1.8s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+@keyframes lq-flicker {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.08) rotate(-2deg); }
+}
+
+.lq-event-banner {
+  background: linear-gradient(90deg, rgba(245,158,11,.12), transparent);
+  border-color: rgba(245,158,11,.35);
+}
+
+/* ---------- 6. Barra de progresso e anel de XP ---------- */
+.lq-track {
+  width: 100%;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+.lq-track-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+.lq-ring-progress {
+  transition: stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);
+}
+.lq-week-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  transition: background .2s ease;
+}
+
+/* ---------- 7. Botão de check de hábito ---------- */
+.lq-check-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  transition: all .15s ease;
+  flex-shrink: 0;
+}
+.lq-check-btn.small { width: 22px; height: 22px; }
+.lq-check-btn.done {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+.lq-check-btn:hover:not(.done) { border-color: var(--accent); }
+
+/* pulso rápido ao concluir um hábito, dispara junto com o popup de XP */
+.lq-pulse { animation: lq-pulse .4s ease; }
+@keyframes lq-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* texto flutuante "+XP" que aparece e sobe ao concluir hábito */
+.lq-xp-popup {
+  position: absolute;
+  left: 34px;
+  top: -6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--success);
+  animation: lq-float-up .9s ease forwards;
+  pointer-events: none;
+}
+@keyframes lq-float-up {
+  0% { opacity: 0; transform: translateY(4px); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-18px); }
+}
+
+/* ---------- 8. Switch (toggle) ---------- */
+.lq-switch {
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--border);
+  position: relative;
+  transition: background .2s ease;
+  flex-shrink: 0;
+}
+.lq-switch.on { background: var(--accent); }
+.lq-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #fff;
+  transition: transform .2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+.lq-switch.on .lq-switch-knob { transform: translateX(16px); }
+
+/* ---------- 9. Segmented control (ex: Semana/Mês/Ano) ---------- */
+.lq-segmented {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.lq-segment {
+  font-size: 11.5px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  color: var(--text-dim);
+  transition: background .15s ease, color .15s ease;
+}
+.lq-segment.active {
+  background: var(--surface);
+  color: var(--text-h);
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+
+/* ---------- 10. Modal ---------- */
+.lq-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+  animation: lq-fade .15s ease;
+}
+@keyframes lq-fade { from { opacity: 0; } to { opacity: 1; } }
+.lq-modal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 85vh;
+  box-shadow: 0 20px 40px rgba(0,0,0,.3);
+  animation: lq-fade-up .2s ease;
+}
+.lq-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.lq-modal-close {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  color: var(--text-dim);
+}
+.lq-modal-close:hover { background: var(--surface-2); }
+
+/* ---------- 10b. Alarme da agenda (toca em loop até "Desligar") ---------- */
+.lq-alarm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 300; /* acima de modal (100) e toast (200) — não pode passar despercebido */
+  animation: lq-fade .15s ease;
+}
+.lq-alarm-card {
+  background: var(--surface);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.4);
+  animation: lq-fade-up .2s ease;
+}
+.lq-alarm-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--danger);
+  background: rgba(239,68,68,.14);
+  animation: lq-alarm-ring 1s ease-in-out infinite;
+}
+@keyframes lq-alarm-ring {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(6deg); }
+}
+.lq-alarm-title { font-size: 17px; font-weight: 700; color: var(--text-h); margin-bottom: 4px; }
+.lq-alarm-sub { font-size: 13px; color: var(--text-dim); margin-bottom: 22px; }
+.lq-alarm-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: .02em;
+}
+.lq-alarm-btn:hover { filter: brightness(1.08); }
+
+/* ---------- 10c. Aviso "sem internet, mostrando cache local" ---------- */
+.lq-offline-banner {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 8px 16px;
+  font-size: 12px;
+  text-align: center;
+  color: #7c5a00;
+  background: #fde68a;
+  border-bottom: 1px solid #f4c430;
+}
+@media (prefers-color-scheme: dark) {
+  .lq-offline-banner { color: #fde68a; background: #4a3b00; border-bottom-color: #7c5a00; }
+}
+:root[data-theme="light"] .lq-offline-banner { color: #7c5a00; background: #fde68a; border-bottom-color: #f4c430; }
+:root[data-theme="dark"] .lq-offline-banner { color: #fde68a; background: #4a3b00; border-bottom-color: #7c5a00; }
+
+/* ---------- 11. Formulários (usados dentro dos modais) ---------- */
+.lq-input, .lq-select, .lq-textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-h);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  font: inherit;
+  font-size: 13.5px;
+  box-sizing: border-box;
+}
+.lq-textarea { resize: vertical; min-height: 70px; }
+.lq-input:focus, .lq-select:focus, .lq-textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* ---------- 12. Botões de ação genéricos ---------- */
+.lq-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  transition: opacity .15s ease, background .15s ease;
+}
+.lq-btn-primary { background: var(--accent); color: #fff; }
+.lq-btn-primary:hover { opacity: .9; }
+.lq-btn-ghost { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+.lq-btn-ghost:hover { background: var(--border); }
+.lq-btn-danger { background: rgba(239,68,68,.12); color: var(--danger); }
+.lq-btn-block { width: 100%; }
+.lq-btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+}
+.lq-btn-icon:hover { background: var(--surface-2); color: var(--text); }
+
+/* ---------- 13. Escolha de ícone/avatar/cor (Perfil e criação de hábito) ---------- */
+.lq-choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.lq-choice-item {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border);
+  color: var(--text-dim);
+}
+.lq-choice-item.selected {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg, rgba(124,58,237,.12));
+}
+.lq-color-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+}
+.lq-color-dot.selected { border-color: var(--text-h); }
+
+/* ---------- 14. Toasts (notificações rápidas no canto da tela) ---------- */
+.lq-toast-stack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 200;
+}
+@media (max-width: 860px) {
+  .lq-toast-stack { left: 14px; right: 14px; bottom: 74px; }
+}
+.lq-toast {
+  background: var(--text-h);
+  color: var(--bg);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
+  animation: lq-toast-in .25s ease;
+}
+@keyframes lq-toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 15. Painel de notificações (sino no topbar) ---------- */
+.lq-notif-panel {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  width: 300px;
+  max-height: 360px;
+  z-index: 60;
+}
+.lq-notif-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  align-items: flex-start;
+}
+.lq-notif-item.unread { background: var(--surface-2); }
+
+/* ---------- 16. Estado vazio (listas sem itens) ---------- */
+.lq-empty {
+  text-align: center;
+  padding: 30px 12px;
+  color: var(--text-faint);
+  font-size: 13px;
+}
